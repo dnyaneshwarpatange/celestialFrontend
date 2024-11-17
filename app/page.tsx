@@ -1,101 +1,100 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { FaSun, FaArrowRight } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const App: React.FC = () => {
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean | null>(null); // Initial state is null
+  const [isHydrated, setIsHydrated] = useState(false); // Track hydration status
+  const router = useRouter();
+
+  useEffect(() => {
+    // This will run only on the client side after the component mounts
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setIsDarkTheme(storedTheme === 'dark');
+    } else {
+      setIsDarkTheme(false); // Default to light theme if no theme is stored
+    }
+
+    // Set hydration status to true after the first render
+    setIsHydrated(true);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkTheme;
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    setIsDarkTheme(newTheme);
+  };
+
+  const handleStartForFree = () => {
+    router.push('/dashboard');
+  };
+
+  if (!isHydrated) {
+    return <div>Loading...</div>; // Prevent hydration error during the first render
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className={`${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'} min-h-screen`}>
+      <header className={`${isDarkTheme ? 'bg-gray-800' : 'bg-white'} shadow-lg p-4`}>
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-3">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="https://plus.unsplash.com/premium_vector-1721209721442-efcb0003d6bf?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Celestial Box Logo"
+              width={40}
+              height={40}
+              className="rounded-full"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <h1 className="text-2xl font-semibold">Celestial Box</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button onClick={toggleTheme} className="text-xl transition duration-300 ease-in-out">
+              <FaSun />
+            </button>
+            <div className={`${isDarkTheme ? 'bg-gray-700' : 'bg-blue-500'} text-white rounded-full h-10 w-10 flex items-center justify-center`}>
+              <span className="text-xl font-bold">D</span>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto mt-12 p-6">
+        <div className={`${isDarkTheme ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-xl p-8 flex items-center space-x-8`}>
+          <div className="w-1/2 space-y-4">
+            <h2 className="text-4xl font-bold">Welcome to Celestial Box</h2>
+            <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+              Storing everything for you and your business needs. All in one place.
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Enhance your personal storage with Celestial Box, offering a simple and efficient way to upload,
+              organize, and access files from anywhere. Securely store important documents and media, and experience
+              the convenience of easy file management and sharing in one centralized solution.
+            </p>
+            <button
+              onClick={handleStartForFree}
+              className={`${isDarkTheme ? 'bg-gray-700' : 'bg-blue-600'} text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 flex items-center space-x-2`}
+            >
+              <span>Try it for free!</span>
+              <FaArrowRight />
+            </button>
+          </div>
+          <div className="w-1/2">
+            <Image
+              src="https://plus.unsplash.com/premium_vector-1726679388141-6cd0c8251451?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Celestial Box Interface"
+              width={600}
+              height={400}
+              className="rounded-lg shadow-lg object-cover"
+            />
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
-}
+};
+
+export default dynamic(() => Promise.resolve(App), { ssr: false });
